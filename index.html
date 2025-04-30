@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <script src="dash.all.min.js"></script>
+  <video id="dashPlayer" controls width="320" height="240"></video>
+  <script>
+    (function () {
+	    var url = "media/manifest.mpd";
+	    var player = dashjs.MediaPlayer().create();
+	    player.initialize(document.querySelector("#dashPlayer"), url, true);
+	    player.updateSettings({
+	      streaming: {
+	        abr: {
+	          autoSwitchBitrate: true,
+	          //abrAlgorithm: 'bola',             // Buffer-oriented ABR
+	          //useBufferOccupancyABR: true,      // Buffer-based switching
+	          //useDeadTimeLatencyForABR: true   // Latency optimization
+	        },
+	        //buffer: {
+	        //  initialBufferLevel: 5,    // 5s initial buffer for fast start
+	        //  stableBufferTime: 15,     // 15s target buffer
+	        //  bufferPruningInterval: 10,// Buffer cleanup every 10s
+	        //  playbackBufferMin: 2      // Never drop below 2s buffer
+	        //},
+	        httpRetryAttempts: 3,       // Max segment retries
+	        httpRetryInterval: 2000,    // 2s between retries
+	        reuseExistingSourceBuffers: false,  // Memory optimization
+	        scheduleWhilePaused: false, // Bandwidth conservation
+	        jumpGaps: true             // Skip corrupted content
+	      }
+	    });
+	    const metrics = player.getDashMetrics();
+	    window.setInterval(()=>console.log(metrics.getCurrentBufferLevel('video')), 200);
+    })();
+  </script>
+</body>
+</html>
